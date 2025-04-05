@@ -1,0 +1,345 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles_morphing.css">
+    <link rel="stylesheet" href="styles_settings.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+        {
+            "imports": {
+                "marked": "https://cdn.jsdelivr.net/npm/marked@4.3.0/lib/marked.esm.js",
+                "firebase/app": "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"
+            }
+        }
+    </script>
+</head>
+<body class="dark-mode">
+    <div class="background-blur"></div>
+    
+    <div class="morphing-bg">
+        <div class="morphing-blob blob1"></div>
+        <div class="morphing-blob blob2"></div>
+        <div class="morphing-blob blob3"></div>
+    </div>
+    
+    <div class="theme-toggle">
+        <input type="checkbox" id="theme-toggle-checkbox">
+        <label for="theme-toggle-checkbox" class="toggle-label">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <circle cx="12" cy="12" r="5" fill="currentColor"/>
+                <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <path d="M12 3a9 9 0 109 9c0-4.97-4.03-9-9-9z" fill="currentColor" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </label>
+    </div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" width="30" height="30">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h1>Nexus AI</h1>
+                </div>
+                <button class="mobile-close">×</button>
+            </div>
+            <div class="user-section">
+                <div id="user-profile" class="hidden">
+                    <div class="user-avatar"></div>
+                    <span id="user-name">User</span>
+                    <button id="logout-btn" class="btn-small">Logout</button>
+                </div>
+                <div id="login-signup" class="login-buttons">
+                    <button id="login-btn" class="btn-primary">Login</button>
+                    <button id="signup-btn" class="btn-outline">Sign Up</button>
+                </div>
+            </div>
+            <div class="conversation-list">
+                <button class="new-chat">
+                    <svg width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M12 4v16m-8-8h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    New Chat
+                </button>
+                <div id="history-list"></div>
+            </div>
+            <div class="personality-settings">
+                <h3>AI Personality</h3>
+                <div class="settings-option">
+                    <label for="tone-select">Tone</label>
+                    <select id="tone-select">
+                        <option value="friendly">Friendly</option>
+                        <option value="professional">Professional</option>
+                        <option value="witty">Witty</option>
+                        <option value="poetic">Poetic</option>
+                    </select>
+                </div>
+                <div class="settings-option">
+                    <label for="expertise-select">Expertise</label>
+                    <select id="expertise-select">
+                        <option value="general">General Knowledge</option>
+                        <option value="technical">Technical</option>
+                        <option value="creative">Creative</option>
+                        <option value="business">Business</option>
+                    </select>
+                </div>
+                <div class="footer-buttons">
+                    <button id="visual-settings-btn" class="icon-text-button">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" fill="currentColor"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Visual
+                    </button>
+                    <button id="update-log-btn" class="icon-text-button">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="currentColor"/>
+                            <path d="M7 7h10M7 11h10M7 15h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Updates
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="mobile-header">
+                <button class="menu-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h1>Nexus AI</h1>
+                </div>
+            </div>
+
+            <div id="welcome-section" class="welcome-section">
+                <div class="hero">
+                    <h1>Meet your new AI companion</h1>
+                    <p>Intelligent conversations powered by cutting-edge AI</p>
+                    <div class="animated-background">
+                        <svg viewBox="0 0 500 200" width="100%" height="180" preserveAspectRatio="none" class="wave-animation">
+                            <path class="wave wave1" d="M0,100 C150,180 350,0 500,100 L500,200 L0,200 Z"></path>
+                            <path class="wave wave2" d="M0,100 C150,0 350,180 500,100 L500,200 L0,200 Z"></path>
+                            <path class="wave wave3" d="M0,100 C150,120 350,80 500,100 L500,200 L0,200 Z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24">
+                                <path d="M12 2c5.523 0 10 4.477 10 10a10 10 0 01-10 10c-5.523 0-10-4.477-10-10 0-5.523 4.477-10 10-10zm0 5a1 1 0 00-1 1v4H7a1 1 0 100 2h5a1 1 0 001-1V8a1 1 0 00-1-1z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3>24/7 Assistance</h3>
+                        <p>Get instant answers anytime you need them</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24">
+                                <path d="M10 3H4a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1V4a1 1 0 00-1-1zm10 0h-6a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1V4a1 1 0 00-1-1zM10 13H4a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1v-6a1 1 0 00-1-1zm7 0a4 4 0 100 8 4 4 0 000-8z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3>Customizable</h3>
+                        <p>Tailor the AI to fit your specific needs</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24">
+                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6zm-7.5-3a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0zm16.5 0h1.5a9 9 0 10-9 9 9 9 0 009-9z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3>Voice Enabled</h3>
+                        <p>Talk naturally with voice input and responses</p>
+                    </div>
+                </div>
+                <button id="start-chatting" class="btn-primary">Start Chatting</button>
+            </div>
+
+            <div id="chat-container" class="chat-container hidden">
+                <div id="chat-messages" class="chat-messages"></div>
+                
+                <div class="chat-input-container">
+                    <div class="input-wrapper">
+                        <textarea id="message-input" placeholder="Type your message here..." rows="1"></textarea>
+                        <button id="voice-input-btn" class="icon-button" title="Voice Input">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M12 2a3 3 0 00-3 3v7a3 3 0 006 0V5a3 3 0 00-3-3zm0 5a1 1 0 00-1 1v4H7a1 1 0 100 2h5a1 1 0 001-1V8a1 1 0 00-1-1z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        <button id="generate-image-btn" class="icon-button" title="Generate Image">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        <button id="send-message-btn" class="icon-button" title="Send Message">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <div id="login-tab" class="tab-content">
+                <h2>Welcome Back</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                <div class="social-login">
+                    <p>Or login with</p>
+                    <button id="google-login" class="btn-google">
+                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Google
+                    </button>
+                </div>
+            </div>
+            
+            <div id="signup-tab" class="tab-content hidden">
+                <h2>Create Account</h2>
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </form>
+                <div class="social-login">
+                    <p>Or sign up with</p>
+                    <button id="google-signup" class="btn-google">
+                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Google
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Log Modal -->
+    <div id="update-log-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2>Update Log</h2>
+            <div class="update-log-content">
+                <div class="update-entry">
+                    <div class="update-date">June 15, 2023</div>
+                    <div class="update-title">Initial Release</div>
+                    <ul class="update-details">
+                        <li>Launched Nexus AI with basic chat functionality</li>
+                        <li>Added user authentication with email and Google</li>
+                        <li>Implemented dark/light theme toggle</li>
+                    </ul>
+                </div>
+                <div class="update-entry">
+                    <div class="update-date">July 10, 2023</div>
+                    <div class="update-title">Visual Enhancements</div>
+                    <ul class="update-details">
+                        <li>Added morphing background animations</li>
+                        <li>Improved message bubbles with subtle animations</li>
+                        <li>Enhanced mobile responsiveness</li>
+                    </ul>
+                </div>
+                <div class="update-entry">
+                    <div class="update-date">August 5, 2023</div>
+                    <div class="update-title">Feature Update</div>
+                    <ul class="update-details">
+                        <li>Added image generation capability</li>
+                        <li>Implemented voice input and response</li>
+                        <li>Added conversation history and management</li>
+                    </ul>
+                </div>
+                <div class="update-entry">
+                    <div class="update-date">Today</div>
+                    <div class="update-title">Latest Improvements</div>
+                    <ul class="update-details">
+                        <li>Added update log to track changes</li>
+                        <li>Implemented visual and animation settings</li>
+                        <li>Improved overall performance and stability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visual Settings Modal -->
+    <div id="visual-settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2>Visual Settings</h2>
+            <div class="settings-group">
+                <h3>Font Size</h3>
+                <div class="slider-container">
+                    <input type="range" id="font-size-slider" min="80" max="120" value="100" class="settings-slider">
+                    <div class="slider-value"><span id="font-size-value">100</span>%</div>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h3>Animation Speed</h3>
+                <div class="slider-container">
+                    <input type="range" id="animation-speed-slider" min="50" max="150" value="100" class="settings-slider">
+                    <div class="slider-value"><span id="animation-speed-value">100</span>%</div>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h3>Blob Intensity</h3>
+                <div class="slider-container">
+                    <input type="range" id="blob-intensity-slider" min="0" max="100" value="60" class="settings-slider">
+                    <div class="slider-value"><span id="blob-intensity-value">60</span>%</div>
+                </div>
+            </div>
+            <button id="reset-visual-settings" class="btn-outline">Reset to Default</button>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+/* Visual Settings and Update Log Styles */
+.update-log-content {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.update-entry {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.update-entry:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.update-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.update-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.update-details {
+    list-style-position: inside;
+    padding-left: 0.5rem;
+}
+
+.update-details li {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 0.5rem;
+}
+
+.update-details li::before {
+    content: "•";
+    position: absolute;
+    left: -0.5rem;
+    color: var(--secondary);
+}
+
+/* Settings Controls */
+.settings-group {
+    margin-bottom: 1.5rem;
+}
+
+.settings-group h3 {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.settings-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--glass-background);
+    outline: none;
+}
+
+.settings-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.settings-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.settings-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.slider-value {
+    min-width: 50px;
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+#reset-visual-settings {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Button Animation for Log and Settings */
+.footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.icon-text-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.icon-text-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.icon-text-button svg {
+    width: 18px;
+    height: 18px;
+}
